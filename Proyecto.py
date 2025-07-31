@@ -1,5 +1,3 @@
-print ("Hola Mundo")
-
 import os
 import getpass
 import re
@@ -24,7 +22,7 @@ class NodoArbol:
         self.derecha = None
 
 class ArbolBinario:
-    """Organiza las habilidades de un ninja en un árbol binario."""
+
     def __init__(self):
         self.raiz = None
 
@@ -91,13 +89,29 @@ def main():
     while True:
         limpiar_pantalla()
         print("  =====================================\n  |   BIENVENIDO AL TORNEO NINJA POLITECNICA   |\n  =====================================")
-        print("\n Elige tu rol: 1. Administrador\n 2. Juagador\n 3. Salir")
+        print("\n Elige tu rol: \n 1. Administrador\n 2. Jugador\n 3. Salir")
         opcion = input("\n > ")
         if opcion=='1':menu_admin()
         elif opcion=='2':menu_jugador()
         elif opcion=='3':print("Chaooooo...Saliendo del programa"); break
         else: print("Opcion no valida."); input("\nEnter para continuar...")
 
+def guardar_historial_combates(combate_info):
+
+    with open("combates.txt", "a") as f:
+        f.write(combate_info + "\n")
+
+def cargar_historial_combates():
+
+    combates = []
+    try:
+        # Línea 1930 [cite: 1930]
+        with open("combates.txt", "r") as f:
+            for line in f:
+                combates.append(line.strip())
+    except FileNotFoundError:
+        pass
+    return combates
 
 if __name__ == "__main__":
     main()
