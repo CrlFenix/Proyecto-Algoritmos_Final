@@ -79,6 +79,13 @@ class ArbolBinario:
             self._postorden_recursivo(nodo.derecha, resultado)
             resultado.append(nodo.habilidad)
 
+class Cola():
+    def __init__(self):self.items=deque()
+    def esta_vacia(self): return len(self.items)==0
+    def encolar(self, item): self.items.append(item)
+    def desencolar(self): return self.items.popleft()if not self.esta_vacia() else None
+    def __len__(self): return len(self.items)
+
 
 def main():
     while True:
