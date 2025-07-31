@@ -23,3 +23,19 @@ class NodoArbol:
         self.izquierda = None
         self.derecha = None
 
+
+
+def main():
+    while True:
+        limpiar_pantalla()
+        print("  =====================================\n  |   BIENVENIDO AL TORNEO NINJA POLITECNICA   |\n  =====================================")
+        print("\n Elige tu rol: 1. Administrador\n 2. Juagador\n 3. Salir")
+        opcion = input("\n > ")
+        if opcion=='1':menu_admin()
+        elif opcion=='2':menu_jugador()
+        elif opcion=='3':print("Chaooooo...Saliendo del programa"); break
+        else: print("Opcion no valida."); input("\nEnter para continuar...")
+
+
+if __name__ == "__main__":
+    main()
