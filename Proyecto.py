@@ -30,3 +30,8 @@ class NodoHabilidad:
         nodo.izquierda = NodoHabilidad.from_string(data_list)
         nodo.derecha = NodoHabilidad.from_string(data_list)
         return nodo
+
+class Usuario:
+    def __init__(self, nombres, identificacion, edad, email, password):
+        self.nombre = nombres
+        self.identificacion
