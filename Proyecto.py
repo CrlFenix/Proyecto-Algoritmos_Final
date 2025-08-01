@@ -247,45 +247,6 @@ if __name__ == "__main__":
 
 
 
-def simular_combate(ninja1, ninja2, usuario_actual=None):
-    print(f"\n⚔️ Combate: {ninja1.nombre} vs {ninja2.nombre} ⚔️")
-
-    puntos_ninja1 = (ninja1.fuerza + ninja1.agilidad + ninja1.resistencia) * random.uniform(0.8, 1.2)
-    puntos_ninja2 = (ninja2.fuerza + ninja2.agilidad + ninja2.resistencia) * random.uniform(0.8, 1.2)
-
-    puntos_ninja1 += sumar_habilidades(ninja1.arbol_habilidades) if ninja1.arbol_habilidades else 0
-    puntos_ninja2 += sumar_habilidades(ninja2.arbol_habilidades) if ninja2.arbol_habilidades else 0
-    print(f"{ninja1.nombre}: {puntos_ninja1:.2f} pts (base + habilidades)")
-    print(f"{ninja2.nombre}: {puntos_ninja2:.2f} pts (base + habilidades)")
-    if puntos_ninja1 > puntos_ninja2:
-        ganador = ninja1
-        perdedor = ninja2
-    elif puntos_ninja2 > puntos_ninja1:
-        ganador = ninja2
-        perdedor = ninja1
-    else:
-        print("¡Empate en puntos! El ganador se decidira al azar") 
-        ganador = random.choice([ninja1, ninja2])
-        perdedor = ninja1 if ganador == ninja2 else ninja2
-
-print(f"🏆 Ganador: {ganador.nombre}! 🏆")
-ganador.puntos_victoria += 1
-
-fecha = datetime.date.today().strftime("%d/%m/%Y")
-combate_info = f"{ninja1.nombre} vs {ninja2.nombre} - Ganador: {ganador.nombre} - Fecha: {fecha}"
-if usuario_actual:
-    if ganador.nombre == ninja1.nombre:
-        usuario_actual.combates_ganados += 1
-    else:
-        usuario_actual.combates_perdidos += 1
-    combate_info += f" – Jugador: {usuario_actual.email}"
-    guardar_progreso_usuario(usuario_actual.email, usuario_actual.combates_ganados, usuario_actual.combates_perdidos)
-    
-guardar_historial_combates(combate_info)
-
-return ganador
-
-
 
 
 
@@ -408,6 +369,43 @@ def sumar_habilidades(nodo):
 
 
 
+def simular_combate(ninja1, ninja2, usuario_actual=None):
+    print(f"\n⚔️ Combate: {ninja1.nombre} vs {ninja2.nombre} ⚔️")
+
+    puntos_ninja1 = (ninja1.fuerza + ninja1.agilidad + ninja1.resistencia) * random.uniform(0.8, 1.2)
+    puntos_ninja2 = (ninja2.fuerza + ninja2.agilidad + ninja2.resistencia) * random.uniform(0.8, 1.2)
+
+    puntos_ninja1 += sumar_habilidades(ninja1.arbol_habilidades) if ninja1.arbol_habilidades else 0
+    puntos_ninja2 += sumar_habilidades(ninja2.arbol_habilidades) if ninja2.arbol_habilidades else 0
+    print(f"{ninja1.nombre}: {puntos_ninja1:.2f} pts (base + habilidades)")
+    print(f"{ninja2.nombre}: {puntos_ninja2:.2f} pts (base + habilidades)")
+    if puntos_ninja1 > puntos_ninja2:
+        ganador = ninja1
+        perdedor = ninja2
+    elif puntos_ninja2 > puntos_ninja1:
+        ganador = ninja2
+        perdedor = ninja1
+    else:
+        print("¡Empate en puntos! El ganador se decidira al azar") 
+        ganador = random.choice([ninja1, ninja2])
+        perdedor = ninja1 if ganador == ninja2 else ninja2
+
+print(f"🏆 Ganador: {ganador.nombre}! 🏆")
+ganador.puntos_victoria += 1
+
+fecha = datetime.date.today().strftime("%d/%m/%Y")
+combate_info = f"{ninja1.nombre} vs {ninja2.nombre} - Ganador: {ganador.nombre} - Fecha: {fecha}"
+if usuario_actual:
+    if ganador.nombre == ninja1.nombre:
+        usuario_actual.combates_ganados += 1
+    else:
+        usuario_actual.combates_perdidos += 1
+    combate_info += f" – Jugador: {usuario_actual.email}"
+    guardar_progreso_usuario(usuario_actual.email, usuario_actual.combates_ganados, usuario_actual.combates_perdidos)
+    
+guardar_historial_combates(combate_info)
+
+return ganador
 
 
 
@@ -447,6 +445,64 @@ def sumar_habilidades(nodo):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def validar_solo_letras(mensaje):
+    while True:
+        valor = input(mensaje).strip()
+        if not valor:
+            print("⚠️ Error: La entrada no puede estar vacía. Por favor, intente de nuevo.")
+        elif not re.fullmatch(r'[a-zA-Z\s]+', valor):
+            print("⚠️ Error: Solo se permiten letras y espacios. Por favor, intente de nuevo.")
+        else:
+            return valor 
+
+def validar_solo_numeros(mensaje):
+    while True:
+        valor = input(mensaje).strip()
+        if not valor:
+            print("⚠️ Error: La entrada no puede estar vacía. Por favor, intente de nuevo.")
+        elif not valor.isdigit():
+            print("⚠️ Error: Solo se permiten números. Por favor, intente de nuevo.")
+        else:
+            return valor 
+        
 
 
 
