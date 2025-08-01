@@ -623,10 +623,40 @@ def validar_ninja_existente(mensaje, ninjas_db):
 
 
 
+def menu_jugador(ninjas_db, usuarios_db):
+    usuario_actual = None
+    while True:
+        print("\n--- MENÚ DE JUGADOR ---")
+        print("1. Registrarse")
+        print("2. Iniciar sesión")
+        print("3. Salir")
 
+        opcion = validar_string_no_vacio("Elija una opcion: ")
+        if opcion == '1':
+            nombres = validar_solo_letras("Nombres y apellidos: ")
+            identificacion = validar_solo_numeros("Identificacion (solo números): ")
+            edad = validar_entero("Edad: ", 1)
+            email = validar_email("Email(formato nombre.apellido@gmail.com): ", usuarios_db, es_registro=True)
+            nuevo_usuario = Usuario(nombres, identificacion, edad, email, password)
+            usuarios_db[email] = nuevo_usuario
+            print("✅ Registro exitoso. ¡Bienvenido!")
+        elif opcion == '2':
+            email = validar_email("Email: ", usuarios_db, es_registro=False)
+            password = validar_string_no_vacio("Contraseña: ") 
 
-
-
+            if email in usuarios_db and usuarios_db[email].password == password:
+                usuario_actual = usuarios_db[email]
+                print(f"🎉 ¡Bienvenido, {usuario_actual.nombres}!")
+                menu_jugador_logeado(ninjas_db, usuarios_db, usuario_actual)
+               
+                usuario_actual = None 
+            else:
+                print("⚠️ Credenciales incorrectas. Verifique su email y contraseña.")
+        elif opcion == '3':
+            print("👋 Saliendo del menú de jugador.")
+            break
+        else:
+            print("⚠️ Opción inválida. Por favor, elija una opción del 1 al 3.")
 
 
 
