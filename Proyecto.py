@@ -360,3 +360,222 @@ class Usuario:
     def __init__(self, nombres, identificacion, edad, email, password):
         self.nombre = nombres
         self.identificacion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def menu_jugador_logeado(ninjas_db, usuarios_db, usuario_actual):
+    while True:
+        print(f"\n--- MENÚ DE JUGADOR ({usuario_actual.nombres}) ---")
+        print("1. Ver árbol de habilidades de un ninja seleccionado")
+        print("2. Simular combate uno vs uno contra otros ninjas") 
+        print("3. Simular un torneo completo de peleas")
+        print("4. Consultar el ranking actualizado de ninjas")
+        print("5. Ver progreso y historial de mis combates")
+        print("6. Cerrar sesión")
+        opcion = validar_string_no_vacio("Elija una opción: ")
+        if opcion == '1':
+            if not ninjas_db:
+                print("No hay ninjas registrados para ver sus habilidades.")
+                continue
+            ninja = validar_ninja_existente("Ingrese el nombre del ninja para ver sus habilidades: ", ninjas_db)
+            if ninja.arbol_habilidades:
+                print(f"\n--- ÁRBOL DE HABILIDADES DE {ninja.nombre} (PREORDEN) ---")
+                mostrar_habilidades_recorrido(ninja.arbol_habilidades, "preorden")
+                print(f"Puntos totales de habilidades: {sumar_habilidades(ninja.arbol_habilidades)}")
+            else:
+                print("Este ninja aún no tiene un árbol de habilidades asignado.")
+        elif opcion == '2':
+            if len(ninjas_db) < 2:
+                print("No hay suficientes ninjas para simular un combate.")
+                continue
+            print("\n--- SIMULAR COMBATE UNO A UNO ---")
+            print("Ninjas disponibles:", ", ".join(ninjas_db.keys()))
+
+            ninja1 = validar_ninja_existente("Ingrese el nombre de su ninja: ", ninjas_db)
+            ninja2 = validar_ninja_diferente("Ingrese el nombre del ninja oponente (diferente a su ninja): ", ninjas_db, ninja1.nombre)
+            
+            simular_combate(ninja1, ninja2, usuario_actual)
+            guardar_ninjas(ninjas_db)
+            print(" Combate simulado y progreso actualizado.")
+        elif opcion == '3':
+            if len(ninjas_db) < 2:
+                print("No hay suficientes ninjas para un torneo. Se necesitan al menos 2 ninjas.")
+                continue
+            
+            # Aseguramos que haya al menos 2, 4, 8, etc. ninjas para un torneo más limpio
+            num_ninjas = len(ninjas_db)
+            # Encuentra la potencia de 2 más cercana y mayor o igual
+            if not (num_ninjas > 0 and (num_ninjas & (num_ninjas - 1) == 0)): # Si no es potencia de 2
+                print(f"Actualmente hay {num_ninjas} ninjas. Para un torneo óptimo, la cantidad de ninjas debería ser una potencia de 2 (2, 4, 8, etc.).")
+                confirmar = validar_string_no_vacio("¿Desea continuar con el torneo con la cantidad actual de ninjas (algunos podrían tener BYE)? (s/n): ").lower()
+                if confirmar != 's':
+                    continue
+
+            ninjas_para_torneo = list(ninjas_db.values())
+            random.shuffle(ninjas_para_torneo)
+
+            simular_torneo(ninjas_para_torneo)
+            guardar_ninjas(ninjas_db)
+            print("Torneo simulado y rankings actualizados.")
+        elif opcion == '4':
+            if not ninjas_db:
+                print("No hay ninjas registrados.")
+                continue
+            ninjas_ordenados = quick_sort_ninjas(list(ninjas_db.values()), key="puntos_victoria")
+            print("\n--- RANKING ACTUAL DE NINJAS POR PUNTOS DE VICTORIA ---")
+            for i, ninja in enumerate(ninjas_ordenados):
+                print(f"{i+1}. {ninja.nombre} - Puntos de Victoria: {ninja.puntos_victoria}")
+        elif opcion == '5':
+            print(f"\n--- PROGRESO DE {usuario_actual.nombres} ---")
+            print(f"Combates ganados: {usuario_actual.combates_ganados}")
+            print(f"Combates perdidos: {usuario_actual.combates_perdidos}")
+            print("\n--- MI HISTORIAL DE COMBATES ---")
+            historial_global = cargar_historial_combates()
+            encontrado = False
+            for combate in historial_global:
+                if usuario_actual.email in combate:
+                    print(combate)
+                    encontrado = True
+            if not encontrado:
+                print("No se encontraron combates asociados a este usuario.")
+
+        elif opcion == '6':
+            print("Cerrando sesión.")
+            break
+        else:
+            print("Opción inválida. Por favor, elija una opción del 1 al 6.")
+            
