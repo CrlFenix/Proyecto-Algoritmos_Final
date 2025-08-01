@@ -102,16 +102,22 @@ def guardar_historial_combates(combate_info):
         f.write(combate_info + "\n")
 
 def cargar_historial_combates():
-
     combates = []
     try:
-        # Línea 1930 [cite: 1930]
         with open("combates.txt", "r") as f:
             for line in f:
                 combates.append(line.strip())
     except FileNotFoundError:
         pass
     return combates
+
+def guardar_progreso_usuario(email_usuario, ganados, perdidos):
+    usuarios = cargar_usuarios()
+    if email_usuario in usuarios:
+        usuarios[email_usuario].combates_ganados = ganados
+        usuarios[email_usuario].combates_perdidos = perdidos
+        guardar_usuarios(usuarios)
+
 
 if __name__ == "__main__":
     main()
