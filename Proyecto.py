@@ -216,3 +216,159 @@ def sumar_habilidades(nodo):
         return 0
     return (nodo.puntos+sumar_habilidades(nodo.izquierda)+sumar_habilidades(nodo.derecha))
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def validar_entero(mensaje,min_val=None, max_val=None):
+    while True:
+        try:
+            valor_str=input(mensaje)
+            valor=int(valor_str)
+            if min_val is not None and valor <min_val:
+                print(f"Error:  el valor debe ser mayor o igual a {min_val}. Por favor, intente de nuevo.")
+            elif max_val is not None and valor < max_val:
+                print(f"Error: el valor debe ser menor o igual a {max_val}. Por favor, intente de nuevo.")
+            else:
+                return valor
+        except ValueError:
+            print("Error: Entrada invalida. Por favor , ingrese un numero entero")
+def validar_solo_letras(mensaje):
+    while True:
+        valor=input(mensaje).strip()
+        if valor:
+            return valor
+        else:
+            print("Error: La entrada no puede estar vacia. Por favor, intente de nuevo. ")
+            
