@@ -136,7 +136,7 @@ def cargar_ninjas():
 
 def guardar_ninjas(ninjas):
     with open("ninjas.txt", "w") as f_ninjas, \
-            open("habilidades_ninja.txt", "w") as f_habilidades:
+             open("habilidades_ninja.txt", "w") as f_habilidades:
         for ninja in ninjas.values():
             f_ninjas.write(ninja.to_file_string_basic() + "\n")
             f_habilidades.write(ninja.to_habilidades_string() + "\n")
@@ -543,22 +543,37 @@ def menu_jugador_logeado(ninjas_db, usuarios_db, usuario_actual):
         else:
             print(" Opcion invalida. Por favor, elija una opcion del 1 al 6.")
 
+def generar_ninja_aleatorio(ninjas_db):
+    nombres_ejemplo = ["Kyo", "Iori", "May", "Ryu", "Benimaru", "Leona", "Clark", "Atena", "Ken", "Terry", "Andy", "Joe", "Mai", "Kim", "Chang", "Choi", "King", "Yuri", "Robert", "Takuma", "Heidern", "Ralf", "Whip", "K'", "Maxima", "Vanessa", "Seth", "Ramon", "Kula", "Angel", "Foxy", "Shingo"]
+    estilos_ejemplo = ["Fuego", "Agua", "Viento", "Tierra", "Electrico", "Sombra", "Luz", "Hielo"]
+    
+    nombre_ninja = random.choice(nombres_ejemplo)
+    while nombre_ninja in ninjas_db:
+        nombre_ninja = random.choice(nombres_ejemplo)
+
+    fuerza = random.randint(5, 10)
+    agilidad = random.randint(5, 10)
+    resistencia = random.randint(5, 10)
+    estilo = random.choice(estilos_ejemplo)
+    
+    nuevo_ninja = Ninja(nombre_ninja, fuerza, agilidad, resistencia, estilo)
+    nuevo_ninja.arbol_habilidades = crear_arbol_habilidades_base()
+    
+    return nuevo_ninja
+
 def main():
     ninjas_db = cargar_ninjas()
     usuarios_db = cargar_usuarios()
-    if not ninjas_db:
-        print("Creando ninjas de ejemplo...")
-        nombres_ejemplo = ["Kyo", "Iori", "May", "Ryu", "Benimaru", "Leona", "Clark", "Atena"]
-        for nombre in nombres_ejemplo:
-            fuerza = random.randint(5, 10)
-            agilidad = random.randint(5, 10)
-            resistencia = random.randint(5, 10)
-            estilo = random.choice(["Fuego", "Agua", "Viento", "Tierra", "Electrico"])
-            ninja = Ninja(nombre, fuerza, agilidad, resistencia, estilo)
-            ninja.arbol_habilidades = crear_arbol_habilidades_base()
-            ninjas_db[nombre] = ninja
+    
+    TARGET_NINJAS = 32
+    if len(ninjas_db) < TARGET_NINJAS:
+        print(f"Generando ninjas adicionales para alcanzar un total de {TARGET_NINJAS} para el torneo...")
+        while len(ninjas_db) < TARGET_NINJAS:
+            nuevo_ninja = generar_ninja_aleatorio(ninjas_db)
+            ninjas_db[nuevo_ninja.nombre] = nuevo_ninja
         guardar_ninjas(ninjas_db)
-        print(" Ninjas de ejemplo creados y guardados.")
+        print(f" {TARGET_NINJAS} ninjas listos para el torneo!")
+
     print("\nBienvenido al Sistema de Gestion de Ninjas y Combates!")
     while True:
         print("\n--- SELECCION DE ROL ---")
