@@ -1,48 +1,76 @@
-import os
-import getpass
-import re
-import hashlib
 import random
-import time
-from datetime import datetime
 from collections import deque
+import datetime
+import re
 
-RUTA_NINJAS="ninjas.txt"
-RUTA_HABILIDADES="habilidades_ninja.txt"
-RUTA_USUARIOS="usuarios.txt"
-RUTA_COMBATES="combates.txt"    
+HABILIDAD_DELIMITER = "|"
 
-def limpiar_pantalla():
-    os.system('cls' if os.name == 'nt' else 'clear')
+class NodoHabilidad:
+    def __init__(self,nombre,puntos):
+        self.nombre=nombre
+        self.puntos=puntos
+        self.izquierda=None
+        self.derecha=None
+    def to_string(self):
+        left_str=self.izquierda.to_string() if self.izquierda else "None"
+        right_str=self.derecha.to_string() if self.derecha else "None"
+        return f"{self.nombre}{HABILIDAD_DELIMITER}{self.puntos}{HABILIDAD_DELIMITER}{left_str}{HABILIDAD_DELIMITER}{right_str}"
+    @staticmethod
+    def from_string(data_list):
+        if not data_list or data_list[0] == "None":
+            if data_list:
+                data_list.pop(0)
+            return None
+        node_data=data_list.pop(0)
+        parts=node_data.split(';')
+        if len(parts) !=2:
+            return None
+        
+        nodo=NodoHabilidad(parts[0], int(parts[1]))
+        nodo.izquierda = NodoHabilidad.from_string(data_list)
+        nodo.derecha = NodoHabilidad.from_string(data_list)
+        return nodo
 
-class NodoArbol:
-    def __init__(self, habilidad):
-        self.habilidad = habilidad
-        self.izquierda = None
-        self.derecha = None
+class Ninja:
+    
+    def __init__(self, nombre, fuerza, agilidad, resistencia, estilo, puntos_victoria=0):
+        self.nombre = nombre
+        self.fuerza = int(fuerza)
+        self.agilidad = int(agilidad)
+        self.resistencia = int(resistencia)
+        self.estilo = estilo
+        self.puntos_victoria = int(puntos_victoria)
+        self.arbol_habilidades = None  # Aquí se almacena el árbol de habilidades
 
-class ArbolBinario:
+    def __str__(self):
+        return (f"Nombre: {self.nombre}, Fuerza: {self.fuerza}, Agilidad: {self.agilidad}, "
+                f"Resistencia: {self.resistencia}, Estilo: {self.estilo}, Puntos de Victoria: {self.puntos_victoria}")
 
-    def __init__(self):
-        self.raiz = None
 
-    def insertar(self, habilidad):
-        if self.raiz is None:
-            self.raiz = NodoArbol(habilidad)
-        else:
-            self._insertar_recursivo(self.raiz, habilidad)
+    def to_file_string_basic(self):
+        return f"{self.nombre},{self.fuerza},{self.agilidad},{self.resistencia},{self.estilo},{self.puntos_victoria}"
 
-    def _insertar_recursivo(self, nodo, habilidad):
-        if habilidad < nodo.habilidad:
-            if nodo.izquierda is None:
-                nodo.izquierda = NodoArbol(habilidad)
-            else:
-                self._insertar_recursivo(nodo.izquierda, habilidad)
-        else:
-            if nodo.derecha is None:
-                nodo.derecha = NodoArbol(habilidad)
-            else:
-                self._insertar_recursivo(nodo.derecha, habilidad)
+    def to_habilidades_string(self):
+        if self.arbol_habilidades:
+            habilidades_list = []
+            def serialize_tree_preorder(node):
+                if node:
+                    habilidades_list.append(f"{node.nombre},{node.puntos}")
+                    serialize_tree_preorder(node.izquierda)
+                    serialize_tree_preorder(node.derecha)
+                else:
+                    habilidades_list.append("None")
+            serialize_tree_preorder(self.arbol_habilidades)
+            return f"{self.nombre}{HABILIDAD_DELIMITER}{HABILIDAD_DELIMITER.join(habilidades_list)}"
+        return f"{self.nombre}{HABILIDAD_DELIMITER}None" # Si no tiene habilidades, igual se guarda el nombre
+
+    @staticmethod
+    def from_file_string_basic(line):
+        
+        data = line.strip().split(',')
+        if len(data) == 6: # Ahora son 6 campos (nombre, fuerza, agilidad, resistencia, estilo, puntos_victoria)
+            return Ninja(data[0], data[1], data[2], data[3], data[4], data[5])
+        return None
 
     def preorden(self):
         resultado = []
@@ -118,6 +146,50 @@ def guardar_progreso_usuario(email_usuario, ganados, perdidos):
         usuarios[email_usuario].combates_perdidos = perdidos
         guardar_usuarios(usuarios)
 
+def simular_torneo(ninjas_participantes):
+    print("\n--- ¡COMIENZA EL TORNEO! ---")
+    rondas_nombres = ["Dieciseisavos", "Octavos", "Cuartos", "Semifinal", "Final"]
+    participantes_actuales = deque(ninjas_participantes[:])
+    ronda_idx = 0
+    while len(participantes_actuales) > 1:
+        nombre_ronda = rondas_nombres[ronda_idx] if ronda_idx < len(rondas_nombres) else f"Ronda {ronda_idx + 1}"
+        print(f"\n--- RONDA DE {nombre_ronda.upper()} ({len(participantes_actuales)} NINJAS) ---")
+        siguiente_ronda = []
+        if len(participantes_actuales) % 2 != 0:
+            print(f"Numero impar de ninjas ({len(participantes_actuales)}). Un ninja pasa automaticamente a la siguiente ronda.")
+            siguiente_ronda.append(participantes_actuales.popleft())
+        combates_ronda = []
+        while len(participantes_actuales) >= 2:
+            ninja1 = participantes_actuales.popleft()
+            ninja2 = participantes_actuales.popleft()
+            combates_ronda.append((ninja1, ninja2))
+        for ninja1, ninja2 in combates_ronda:
+            ganador = simular_combate(ninja1, ninja2)
+            siguiente_ronda.append(ganador)
+        participantes_actuales = deque(siguiente_ronda)
+        ronda_idx += 1
+    campeon = participantes_actuales[0] if participantes_actuales else None
+    if campeon:
+        print(f"\n ¡EL CAMPEON DEL TORNEO ES: {campeon.nombre}! ")
+        print("\nHabilidades del campeon:")
+        mostrar_habilidades_recorrido(campeon.arbol_habilidades, "preorden")
+    else:
+        print("\nNo se pudo determinar un campeon, insuficientes ninjas.")
+    guardar_ninjas(dict(zip([n.nombre for n in ninjas_participantes], ninjas_participantes)))
+    
 
 if __name__ == "__main__":
     main()
+    @staticmethod
+    def from_habilidades_string(line):
+        
+        parts = line.strip().split(HABILIDAD_DELIMITER, 1) # Separamos solo el primer delimitador
+        if len(parts) == 2:
+            nombre_ninja = parts[0]
+            habilidades_str = parts[1]
+            if habilidades_str != "None":
+                habilidades_list = habilidades_str.split(HABILIDAD_DELIMITER)
+                arbol_habilidades = NodoHabilidad.from_string(habilidades_list)
+                return nombre_ninja, arbol_habilidades
+        return None, None
+    

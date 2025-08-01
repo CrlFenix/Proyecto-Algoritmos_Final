@@ -1,0 +1,9 @@
+Kyo,5,10,7,Eléctrico,0
+Iori,6,7,9,Fuego,0
+May,9,10,7,Tierra,0
+Ryu,5,7,9,Viento,0
+Benimaru,9,6,7,Tierra,0
+Leona,5,9,8,Tierra,0
+Clark,8,10,10,Viento,0
+Atena,10,7,6,Fuego,0
+Juan,7,7,7,DX,0
