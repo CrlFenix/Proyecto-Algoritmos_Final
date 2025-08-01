@@ -493,7 +493,16 @@ def validar_solo_letras(mensaje):
         else:
             return valor 
 
-
+def validar_solo_numeros(mensaje):
+    while True:
+        valor = input(mensaje).strip()
+        if not valor:
+            print("⚠️ Error: La entrada no puede estar vacía. Por favor, intente de nuevo.")
+        elif not valor.isdigit():
+            print("⚠️ Error: Solo se permiten números. Por favor, intente de nuevo.")
+        else:
+            return valor 
+        
 
 
 
