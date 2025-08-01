@@ -1,0 +1,9 @@
+Kyo|None
+Iori|None
+May|None
+Ryu|None
+Benimaru|None
+Leona|None
+Clark|None
+Atena|None
+Juan|Ataque rapido,8|Golpe fuerte,6|Barrido bajo,9|None|None|Lanzamiento de shuriken,5|None|None|Esquiva veloz,5|Bloqueo alto,10|None|None|Patada giratoria,9|None|None
