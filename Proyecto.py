@@ -356,3 +356,7 @@ def validar_solo_letras(mensaje):
         else:
             print("Error: La entrada no puede estar vacia. Por favor, intente de nuevo. ")
             
+class Usuario:
+    def __init__(self, nombres, identificacion, edad, email, password):
+        self.nombre = nombres
+        self.identificacion
